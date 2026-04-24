@@ -1,0 +1,319 @@
+{
+  "name": "Decisiones basadas en IA",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.quotable.io/random",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        544,
+        -112
+      ],
+      "id": "c2e7ee38-f992-4b11-a7b2-a370a252385c",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Clasifica el siguiente contenido por sentimiento positivo o negativo {{ $json.content }}. Manten el mismo formato de salida, es decir, solo necesito el \"texto_traducido\""
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        752,
+        -112
+      ],
+      "id": "1f1447e7-4ca7-41ba-9a64-959a97fc125a",
+      "name": "Message a model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULGfc3xV3im9vMeY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -112
+      ],
+      "id": "f07506da-7a57-4583-a130-31e9f8e3890f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9ef244de-4da5-4cfc-ac49-6a50b3aaefca",
+              "leftValue": "={{ $json.output[0].content[0].text.sentimiento }}",
+              "rightValue": "Positivo",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1104,
+        -112
+      ],
+      "id": "4cbdf266-2e89-4380-8f4d-7adf45ff2c89",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=El contenido de este articulo es positvo {{ $('HTTP Request1').item.json.content }} añadele texto y/o emojis alucivos y traducelo al español y manten el formato de salida \"texto_traducido\" sin usar mas información"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1312,
+        -192
+      ],
+      "id": "154bc225-317d-4776-84cb-c07710fc33a1",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULGfc3xV3im9vMeY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=El contenido de este articulo es negativo  añadele texto y/o emojis alucivos y traducelo al español y manten el formato de salida \"texto_traducido\" sin usar mas información"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1312,
+        -64
+      ],
+      "id": "f0a50a9b-d2d9-4a84-afb8-c7322e6dd307",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULGfc3xV3im9vMeY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba7df9aa-7940-4352-934c-7e1c5c46c47a",
+              "name": "output[0].content[0].text.traduccion_espanol",
+              "value": "={{ $('Message a model2').item.json.output[0].content[0].text.texto_traducido }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1664,
+        -192
+      ],
+      "id": "da0525c7-6b0b-4f9b-acd6-d672f9ebc3c9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd53fc2e-4e17-459e-bc88-403cceea8462",
+              "name": "output[0].content[0].text.texto_modificado",
+              "value": "={{ $('Message a model2').item.json.output[0].content[0].text.texto_traducido }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1664,
+        -64
+      ],
+      "id": "05e4abf3-c116-4300-a957-6544296cdc3b",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "42d45d73-9a05-4dcd-b390-11ba371830cc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "72edee90f76775de8801d985b0bd265adc2d572797dbe1ef4f411656d309ca70"
+  },
+  "id": "5fIXXMkKfOnFsToL",
+  "tags": []
+}

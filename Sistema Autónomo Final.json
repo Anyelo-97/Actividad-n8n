@@ -1,0 +1,473 @@
+{
+  "name": "Sistema Autónomo Final",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.quotable.io/random",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -528,
+        16
+      ],
+      "id": "df89d456-5dda-4059-8cd1-66284e5b530d",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Clasifica el siguiente contenido por sentimiento positivo o negativo {{ $json.content }}. Manten el mismo formato de salida, es decir, solo necesito el \"texto_traducido\""
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        16
+      ],
+      "id": "3499df71-fab8-4eff-9c70-3f9d83f1e973",
+      "name": "Message a model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULGfc3xV3im9vMeY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9ef244de-4da5-4cfc-ac49-6a50b3aaefca",
+              "leftValue": "={{ $json.output[0].content[0].text.sentimiento }}",
+              "rightValue": "Positivo",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        16
+      ],
+      "id": "09d3582b-34e0-43b6-9f59-150a4327c063",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=El contenido de este articulo es positvo {{ $('HTTP Request1').item.json.content }} añadele texto y/o emojis alucivos y traducelo al español y manten el formato de salida \"texto_traducido\" sin usar mas información"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        192,
+        -96
+      ],
+      "id": "d4fc0239-f821-4067-a2dc-1aef1502c2d6",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULGfc3xV3im9vMeY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=El contenido de este articulo{{ $json.output[0].content[0].text.texto_traducido }} es negativo  añadele texto y/o emojis alucivos y traducelo al español y manten el formato de salida \"texto_traducido\" sin usar mas información"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        192,
+        112
+      ],
+      "id": "e2f26982-e0f2-44e2-916f-9ce9d2e6071e",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULGfc3xV3im9vMeY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba7df9aa-7940-4352-934c-7e1c5c46c47a",
+              "name": "output[0].content[0].text.traduccion_espanol",
+              "value": "={{ $('Message a model2').item.json.output[0].content[0].text.texto_traducido }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        -64
+      ],
+      "id": "c5a07dd5-00f0-4450-bc74-f948947d2f7a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd53fc2e-4e17-459e-bc88-403cceea8462",
+              "name": "output[0].content[0].text.texto_modificado",
+              "value": "={{ $('Message a model2').item.json.output[0].content[0].text.texto_traducido }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        64
+      ],
+      "id": "d1f6298b-3865-49f5-8b29-0aa9d20b2eda",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -752,
+        16
+      ],
+      "id": "339a72f4-629d-46aa-a3ce-3ef77178afa6",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xSvjhePtH_Z0M5kguhUvzwgi8kUETZAxUVKqc01pXv0",
+          "mode": "list",
+          "cachedResultName": "Sistema Autónomo Final",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xSvjhePtH_Z0M5kguhUvzwgi8kUETZAxUVKqc01pXv0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xSvjhePtH_Z0M5kguhUvzwgi8kUETZAxUVKqc01pXv0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Positivo",
+              "displayName": "Positivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Negativo",
+              "displayName": "Negativo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        -64
+      ],
+      "id": "8cf192f7-6c4d-4fce-8f4d-d1967e3611a7",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "AfAKtRPa3bAvBDHY",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xSvjhePtH_Z0M5kguhUvzwgi8kUETZAxUVKqc01pXv0",
+          "mode": "list",
+          "cachedResultName": "Sistema Autónomo Final",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xSvjhePtH_Z0M5kguhUvzwgi8kUETZAxUVKqc01pXv0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xSvjhePtH_Z0M5kguhUvzwgi8kUETZAxUVKqc01pXv0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Negativo": "={{ $('Message a model1').item.json.output[0].content[0].text.texto_traducido }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Positivo",
+              "displayName": "Positivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Negativo",
+              "displayName": "Negativo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        96
+      ],
+      "id": "843efc9c-cb4c-446c-880f-53c7c777c49c",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "AfAKtRPa3bAvBDHY",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4dfc900a-b007-44c7-808a-0adaa12aa1d0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "72edee90f76775de8801d985b0bd265adc2d572797dbe1ef4f411656d309ca70"
+  },
+  "id": "2PSdPOY9GTg5cBqT",
+  "tags": []
+}

@@ -1,0 +1,134 @@
+{
+  "name": "IA + API Data",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c0d461e6-26a6-4edf-992d-6b28f0910bde",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything?q=tesla&from=2026-03-24&sortBy=publishedAt&apiKey=f97c93530ee244a883fb40d057ac090a",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f0f6bba7-0b5f-473d-b735-ecb8618e6cfe",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Dame un resumen del siguiente articulo {{ $json.articles[0].content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "8ff6590b-1065-4b9c-a31d-0d38583c2f36",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULGfc3xV3im9vMeY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "389a0cac-bfae-4271-9f86-1a0c90c5fa5d",
+              "name": "output[0].content[0].text",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        0
+      ],
+      "id": "3d04973b-ab10-4b46-a0ae-2f529865de4b",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "16cd47d5-fae4-47bb-a4a9-ed233bf25095",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "72edee90f76775de8801d985b0bd265adc2d572797dbe1ef4f411656d309ca70"
+  },
+  "id": "9cj5fZpjFG2zuWzc",
+  "tags": []
+}

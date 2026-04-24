@@ -1,0 +1,148 @@
+{
+  "name": "Salida estructurada",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        16
+      ],
+      "id": "09e6c922-c2f3-4faa-b890-e13252d30262",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://api.quotable.io/random",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        160,
+        16
+      ],
+      "id": "b2d09248-e10f-4d39-99ca-d8607a494e51",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Clasifica el siguiente contenido por categoría y/o sentimiento {{ $json.content }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        16
+      ],
+      "id": "a8a4e545-567a-4de7-a974-9c2662935638",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ULGfc3xV3im9vMeY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3fdcf4fe-4702-4b7b-a6e3-f5b94c9db9a9",
+              "name": "Sentimiento",
+              "value": "={{ $json.output[0].content[0].text.sentimiento }}",
+              "type": "string"
+            },
+            {
+              "id": "aec05865-8c40-4099-9c31-6367ec1988f4",
+              "name": "Categoria",
+              "value": "={{ $json.output[0].content[0].text['categoría'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        16
+      ],
+      "id": "a7e2c2ae-40cd-4625-9089-d0ccb921b9b1",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "24866151-b626-47d2-a908-4a19413bdc8d",
+  "meta": {
+    "instanceId": "72edee90f76775de8801d985b0bd265adc2d572797dbe1ef4f411656d309ca70"
+  },
+  "id": "UQAVTJ7Pyfvfrahx",
+  "tags": []
+}
