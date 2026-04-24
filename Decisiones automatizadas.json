@@ -1,0 +1,286 @@
+{
+  "name": "Decisiones automatizadas",
+  "nodes": [
+    {
+      "parameters": {
+        "values": {
+          "boolean": [
+            {
+              "name": "Posee_licencia",
+              "value": true
+            }
+          ],
+          "string": [
+            {
+              "name": "Tipo_de_licencia",
+              "value": "B1"
+            },
+            {
+              "name": "Tipo_de_vehiculo",
+              "value": "B1"
+            },
+            {
+              "name": "Fecha_de_vencimiento_del_carnet",
+              "value": "2027-12-31"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2b28b48b-09e1-4f99-9118-b8c07f0eb464",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        656,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.Posee_licencia }}"
+            }
+          ]
+        }
+      },
+      "id": "dee140a6-909d-4f6b-b42e-5c0af7023f04",
+      "name": "IF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        864,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "Resultado",
+              "value": "No puede conducir"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e20c4b3d-4e53-406e-9b77-1a34d942b8d3",
+      "name": "Set1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.Tipo_de_licencia }}",
+              "operation": "notEqual",
+              "value2": "={{ $json.Tipo_de_vehiculo }}"
+            }
+          ]
+        }
+      },
+      "id": "6b6bde76-4af7-4651-9acd-883a2a882361",
+      "name": "IF1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        1184
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "Resultado",
+              "value": "Licencia no válida para este vehículo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "792d0fd8-dbd9-41ff-8057-88c0db34b743",
+      "name": "Set2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "dateTime": [
+            {
+              "value1": "={{ $json.Fecha_de_vencimiento_del_carnet }}",
+              "operation": "before",
+              "value2": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "8e880a9b-56f6-489b-addc-a018dab9eac8",
+      "name": "IF2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "Resultado",
+              "value": "Licencia vencida"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1e4efadf-6508-4ee0-94bd-cedc55153a27",
+      "name": "Set3",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        1184
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "Resultado",
+              "value": "Puede conducir"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6d6b6f3c-42f5-438d-b8bb-3f5ec503b601",
+      "name": "Set4",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        1392
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        416,
+        1136
+      ],
+      "id": "ea38c054-b7d5-4dba-b0ad-8c2d1d656131",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF": {
+      "main": [
+        [
+          {
+            "node": "Set1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF1": {
+      "main": [
+        [
+          {
+            "node": "Set2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF2": {
+      "main": [
+        [
+          {
+            "node": "Set3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9380931d-262d-45ec-9539-be2596b36c2d",
+  "meta": {
+    "instanceId": "72edee90f76775de8801d985b0bd265adc2d572797dbe1ef4f411656d309ca70"
+  },
+  "id": "2h6VELG2qbkMDqPv",
+  "tags": []
+}

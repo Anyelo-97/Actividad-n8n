@@ -1,0 +1,234 @@
+{
+  "name": "Manejo de errores",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://swapi.dev/api/people/",
+        "allowUnauthorizedCerts": true,
+        "options": {}
+      },
+      "id": "f605d026-0f54-4622-b198-750b6ed964da",
+      "name": "HTTP Request - SWAPI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json[\"statusCode\"] || 200 }}",
+              "value2": "400"
+            }
+          ]
+        }
+      },
+      "id": "1dcb12f2-0427-47b5-9e73-c45d51a93756",
+      "name": "IF Error?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "id": "ad48f0d9-43fa-4b2e-a9f0-4ef3995a9c94",
+      "name": "Split Results",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json[\"height\"] }}",
+              "operation": "larger",
+              "value2": 170
+            }
+          ]
+        }
+      },
+      "id": "4bca1893-344e-4d7a-b1e1-91c635ca2815",
+      "name": "IF Height > 170",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        112
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "54eba6f6-9319-4219-adef-01846ce3861c",
+      "name": "Tall Characters",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "cd966c5d-8dbd-4eb1-b671-3261232a50c2",
+      "name": "Short Characters",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        0,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "message",
+              "value": "Error al conectar con la API SWAPI"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4d28ed9d-cb61-4e5a-a650-ff90bc9916cf",
+      "name": "Set Error Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        304
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "f37cf828-b746-46d1-b8c7-0f120849405c",
+      "name": "Error Output",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        304
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        208
+      ],
+      "id": "d1a37f5d-2802-4fc4-8eb4-598233c06c86",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request - SWAPI": {
+      "main": [
+        [
+          {
+            "node": "IF Error?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Error?": {
+      "main": [
+        [
+          {
+            "node": "Set Error Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Results": {
+      "main": [
+        [
+          {
+            "node": "IF Height > 170",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Height > 170": {
+      "main": [
+        [
+          {
+            "node": "Tall Characters",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Short Characters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Error Message": {
+      "main": [
+        [
+          {
+            "node": "Error Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - SWAPI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "bc4fa364-b374-4293-8a52-442e9dfc09d5",
+  "meta": {
+    "instanceId": "72edee90f76775de8801d985b0bd265adc2d572797dbe1ef4f411656d309ca70"
+  },
+  "id": "10HflZjpHZMNxr5f",
+  "tags": []
+}

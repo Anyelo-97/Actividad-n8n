@@ -1,0 +1,100 @@
+{
+  "name": "Flujo con datos estáticos",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9869d883-834d-4001-a48e-7c99e063be73",
+              "name": "Nombre",
+              "value": "=Anyelo Pabón",
+              "type": "string"
+            },
+            {
+              "id": "76c96a7c-ded1-4337-b868-136d4261f646",
+              "name": "Ciudad",
+              "value": "=Pekín",
+              "type": "string"
+            },
+            {
+              "id": "1d44a61f-1794-4645-ae6b-3a78ade22712",
+              "name": "Email",
+              "value": "=123@gmail.com",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8364b4ba-4425-4d96-bba9-67740a499ae4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4ef0d0e5-eadb-48de-8c9a-1fa3ad17e006",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "612b0f58-6e6f-4c58-bb52-fd363ed179db",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6977b402-c9b7-4fb8-a296-6e33097c71df",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "72edee90f76775de8801d985b0bd265adc2d572797dbe1ef4f411656d309ca70"
+  },
+  "id": "R1EaqJb7lsyv4JUn",
+  "tags": []
+}

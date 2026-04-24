@@ -1,0 +1,153 @@
+{
+  "name": "Filtrado de datos",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ Number($json[\"height\"]) }}",
+              "operation": "larger",
+              "value2": 170
+            }
+          ]
+        }
+      },
+      "id": "6afcc4d4-9164-4bdf-9a5d-aaef5b6c8e48",
+      "name": "IF Height > ",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a78398ec-febc-4498-8ac1-df78fc69fd8b",
+      "name": "True (Tall Characters)1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        128
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "c7bf0499-ff7f-4aa6-a560-66c0a1f6d3e2",
+      "name": "False (Short Characters)1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        336
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -848,
+        240
+      ],
+      "id": "5b4c9daf-f52f-4531-b450-c5d18cdc82dd",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://swapi.dev/api/people/",
+        "allowUnauthorizedCerts": true,
+        "options": {}
+      },
+      "id": "388df996-89d9-4d33-b11c-6dab9880e980",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "id": "59d3b8bc-85f7-4d15-96fc-1701d3fe09e3",
+      "name": "Split Results",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        240
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "IF Height > ": {
+      "main": [
+        [
+          {
+            "node": "True (Tall Characters)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "False (Short Characters)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Results": {
+      "main": [
+        [
+          {
+            "node": "IF Height > ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f2985bb5-aa54-49db-aa41-b28a60564f61",
+  "meta": {
+    "instanceId": "72edee90f76775de8801d985b0bd265adc2d572797dbe1ef4f411656d309ca70"
+  },
+  "id": "gmQ9z4lZoRBGXIsN",
+  "tags": []
+}
